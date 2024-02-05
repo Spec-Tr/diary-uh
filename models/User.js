@@ -1,28 +1,39 @@
-const mongoose = require('mongoose');
+const { Schema, model } = require('mongoose');
 
-const userSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  lastAccessed: { type: Date, default: Date.now },
-});
-
-const User = mongoose.model('User', userSchema);
-
-const handleError = (err) => console.error(err);
-
-User.find({})
-    .exec()
-    .then(collection => {
-        if(collection.length === 0) {
-            User
-            .insertMany(
-                [
-                    { username: "tman", email: "t@man.com", thoughts: [], friends: []},
-                    { username: "bob", email: "bob@bob.com", thoughts: [], friends: []},
-                    { username: "jen", email: "jen@jen.com", thoughts: [], friends: []},
-                ]
-            )
-            .catch(err => handleError(err));
+const userSchema = new Schema(
+    {
+        username: {
+            type: String,
+            required: true,
+            unique: true,
+            trimmed: true
+        },
+        email: {
+            type: String,
+            required: true,
+            unique: true,
+            match: /^([a-z0-9_.-]+)@([\da-z.-]+).([a-z.]{2,6})$/
+        },
+        thoughts: [
+            {
+                type:Schema.Types.ObjectId,
+                ref: "Thought"
+            }
+        ],
+        friends: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: "User"
+            }
+        ]
+    },
+    {
+        toJson: {
+            getters: true
         }
-    });
+    }
+);
+
+const User = model("User", userSchema)
 
     module.exports = User; 
