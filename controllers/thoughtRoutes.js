@@ -90,7 +90,7 @@ router.delete("/:thoughtId/reactions", (req, res) => {
         {_id: req.params.thoughtId},
         {$pull: {reactions: {reactionId: reactionId}}}
     ).then(newReaction => {
-        res.json({msg: "Reaction removed successfuly"})
+        res.json({msg: "Reaction removed successfully"})
     }).catch(err => {
         console.error(err)
         res.status(500).json({ msg: "Internal server error", err })
